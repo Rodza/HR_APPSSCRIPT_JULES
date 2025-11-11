@@ -252,4 +252,29 @@
   
   // Auto-load timesheets on page load (default to Pending)
   loadTimesheets();
+
+  function fetchTimesheets() {
+    google.script.run.withSuccessHandler(displayTimesheets).listPendingTimesheets();
+  }
+
+  function displayTimesheets(timesheets) {
+    var tableBody = document.getElementById('timesheetTableBody');
+    tableBody.innerHTML = '';
+    timesheets.forEach(function(t) {
+      var row = tableBody.insertRow();
+      row.insertCell().textContent = t['Employee Name'];
+      row.insertCell().textContent = new Date(t['Week Ending']).toLocaleDateString();
+      row.insertCell().textContent = t['Standard Hours'];
+      row.insertCell().textContent = t['Overtime Hours'];
+      row.insertCell().textContent = t['Total Hours'];
+      row.insertCell().textContent = t['Status'];
+      var actionsCell = row.insertCell();
+      actionsCell.innerHTML = '<button onclick="approveTimesheet(\'' + t.id + '\')">Approve</button> ' +
+                              '<button onclick="rejectTimesheet(\'' + t.id + '\')">Reject</button>';
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    fetchTimesheets();
+  });
 </script>

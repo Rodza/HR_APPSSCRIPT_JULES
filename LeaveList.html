@@ -185,4 +185,26 @@
   
   // Auto-load leave records on page load
   loadLeaveRecords();
+
+  function fetchLeave() {
+    google.script.run.withSuccessHandler(displayLeave).listLeave();
+  }
+
+  function displayLeave(leave) {
+    var tableBody = document.getElementById('leaveTableBody');
+    tableBody.innerHTML = '';
+    leave.forEach(function(l) {
+      var row = tableBody.insertRow();
+      row.insertCell().textContent = l['Employee Name'];
+      row.insertCell().textContent = new Date(l['Start Date']).toLocaleDateString();
+      row.insertCell().textContent = new Date(l['End Date']).toLocaleDateString();
+      row.insertCell().textContent = l['Reason'];
+      row.insertCell().textContent = l['Total Days'];
+      row.insertCell().textContent = l['Notes'];
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    fetchLeave();
+  });
 </script>
