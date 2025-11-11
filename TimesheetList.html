@@ -250,9 +250,6 @@
     return div.innerHTML;
   }
   
-  // Auto-load timesheets on page load (default to Pending)
-  loadTimesheets();
-
   function fetchTimesheets() {
     google.script.run.withSuccessHandler(displayTimesheets).listPendingTimesheets();
   }

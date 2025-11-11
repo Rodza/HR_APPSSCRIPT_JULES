@@ -82,3 +82,20 @@
   </div>
   <button type="submit" id="employee-submit-button">Save Employee</button>
 </form>
+
+<script>
+  document.getElementById('employee-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var formData = new FormData(this);
+    var data = {};
+    formData.forEach((value, key) => data[key] = value);
+    google.script.run.withSuccessHandler(function(response) {
+      if (response.success) {
+        alert('Employee added successfully!');
+        loadView('employee-list');
+      } else {
+        alert('Error: ' + response.message);
+      }
+    }).addEmployee(data);
+  });
+</script>
