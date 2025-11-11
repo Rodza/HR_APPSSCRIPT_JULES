@@ -64,3 +64,6 @@ function generatePayslipPDF(recordNumber) { return Payroll.generatePayslipPDF(re
 function generateOutstandingLoansReport(asOfDate) { return Reports.generateOutstandingLoansReport(asOfDate); }
 function generateIndividualStatementReport(employeeName, startDate, endDate) { return Reports.generateIndividualStatementReport(employeeName, startDate, endDate); }
 function generateWeeklyPayrollSummaryReport(weekEnding) { return Reports.generateWeeklyPayrollSummaryReport(weekEnding); }
+
+// --- Utility Functions ---
+function checkSheetConnections() { return Utils.checkSheetConnections(); }

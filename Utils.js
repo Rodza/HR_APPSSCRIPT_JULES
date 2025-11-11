@@ -96,3 +96,30 @@ const Logger = {
     console.error(JSON.stringify(message, null, 2));
   }
 };
+
+/**
+ * Checks for the existence of all critical sheets.
+ * @return {object} An object with `success` and a list of `missingSheets`.
+ */
+function checkSheetConnections() {
+  const sheetNames = [
+    'Employee Details',
+    'leave',
+    'loans',
+    'salary',
+    'pending_timesheets'
+  ];
+  const missingSheets = [];
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  sheetNames.forEach(function(sheetName) {
+    if (!ss.getSheetByName(sheetName)) {
+      missingSheets.push(sheetName);
+    }
+  });
+
+  return {
+    success: missingSheets.length === 0,
+    missingSheets: missingSheets
+  };
+}

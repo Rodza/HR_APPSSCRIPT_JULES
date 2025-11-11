@@ -402,9 +402,13 @@
     
     // Initialize - load employee list
     window.onload = function() {
-      setTimeout(function() {
-        loadView('employee-list');
-      }, 100); // Delay to allow other scripts to load
+      google.script.run.withSuccessHandler(function(result) {
+        if (result.success) {
+          loadView('employee-list');
+        } else {
+          showError({message: 'Could not connect to the following sheets: ' + result.missingSheets.join(', ')});
+        }
+      }).checkSheetConnections();
     };
   </script>
 </body>
