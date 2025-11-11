@@ -250,8 +250,9 @@
     return div.innerHTML;
   }
   
-  function fetchTimesheets() {
-    google.script.run.withSuccessHandler(displayTimesheets).listPendingTimesheets();
+  function loadTimesheets() {
+    var status = document.getElementById('timesheetStatusFilter').value;
+    google.script.run.withSuccessHandler(displayTimesheets).listPendingTimesheets({status: status});
   }
 
   function displayTimesheets(timesheets) {
