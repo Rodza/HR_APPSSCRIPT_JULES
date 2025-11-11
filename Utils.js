@@ -103,11 +103,11 @@ const Logger = {
  */
 function checkSheetConnections() {
   const sheetNames = [
-    'Employee Details',
-    'leave',
-    'loans',
-    'salary',
-    'pending_timesheets'
+    'EMPLOYEE DETAILS',
+    'LEAVE',
+    'EmployeeLoans',
+    'MASTERSALARY',
+    'PendingTimesheets'
   ];
   const missingSheets = [];
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);

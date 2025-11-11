@@ -22,7 +22,7 @@ function addLoanTransaction(data) {
 
     recalculateLoanBalances(employeeId); // Ensure balances are correct before adding
     
-    const sheet = getSheet('loans');
+    const sheet = getSheet('EmployeeLoans');
     if (!sheet) {
       return { success: false, message: 'Loans sheet not found.' };
     }
@@ -75,7 +75,7 @@ function getCurrentLoanBalance(employeeId) {
  * @return {Array<object>} A sorted list of loan transactions.
  */
 function getLoanHistory(employeeId) {
-  const sheet = getSheet('loans');
+  const sheet = getSheet('EmployeeLoans');
   if(!sheet) return [];
   const data = sheet.getDataRange().getValues();
   const headers = data.shift();
@@ -104,7 +104,7 @@ function getLoanHistory(employeeId) {
  * @param {string} employeeId The unique ID of the employee.
  */
 function recalculateLoanBalances(employeeId) {
-  const sheet = getSheet('loans');
+  const sheet = getSheet('EmployeeLoans');
   if(!sheet) return;
   const dataRange = sheet.getDataRange();
   const allData = dataRange.getValues();
@@ -144,7 +144,7 @@ function recalculateLoanBalances(employeeId) {
  * @return {object} The loan record.
  */
 function findLoanRecordBySalaryLink(recordNumber) {
-    const sheet = getSheet('loans');
+    const sheet = getSheet('EmployeeLoans');
     if(!sheet) return null;
     const data = sheet.getDataRange().getValues();
     const headers = data.shift();

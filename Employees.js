@@ -2,7 +2,7 @@
  * @fileoverview All functions for employee management.
  */
 
-const EMPLOYEE_SHEET = 'Employee Details';
+const EMPLOYEE_SHEET = 'EMPLOYEE DETAILS';
 
 /**
  * Adds a new employee to the EMPLOYEE DETAILS sheet.
