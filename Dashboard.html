@@ -402,7 +402,9 @@
     
     // Initialize - load employee list
     window.onload = function() {
-      loadView('employee-list');
+      setTimeout(function() {
+        loadView('employee-list');
+      }, 100); // Delay to allow other scripts to load
     };
   </script>
 </body>
