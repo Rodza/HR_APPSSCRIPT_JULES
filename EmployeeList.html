@@ -27,3 +27,42 @@
     </tbody>
   </table>
 </div>
+
+<script>
+  function fetchEmployees() {
+    google.script.run.withSuccessHandler(displayEmployees).listEmployees();
+  }
+
+  function displayEmployees(employees) {
+    var tableBody = document.getElementById('employee-table').getElementsByTagName('tbody')[0];
+    tableBody.innerHTML = '';
+    employees.forEach(function(employee) {
+      var row = tableBody.insertRow();
+      row.insertCell().textContent = employee['EMPLOYEE NAME'];
+      row.insertCell().textContent = employee['SURNAME'];
+      row.insertCell().textContent = employee['EMPLOYER'];
+      row.insertCell().textContent = employee['HOURLY RATE'];
+      row.insertCell().textContent = employee['CONTACT NUMBER'];
+      row.insertCell().textContent = employee['EMPLOYMENT STATUS'];
+      var actionsCell = row.insertCell();
+      actionsCell.innerHTML = '<button onclick="viewEmployee(\'' + employee.ID + '\')">View</button> ' +
+                              '<button onclick="editEmployee(\'' + employee.ID + '\')">Edit</button>';
+    });
+  }
+
+  function addNewEmployee() {
+    loadView('employee-add');
+  }
+
+  function viewEmployee(id) {
+    loadView('employee-view', {id: id});
+  }
+
+  function editEmployee(id) {
+    loadView('employee-edit', {id: id});
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    fetchEmployees();
+  });
+</script>

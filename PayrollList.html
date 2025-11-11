@@ -219,4 +219,29 @@
   
   // Auto-load payslips on page load
   loadPayslips();
+
+  function fetchPayslips() {
+    google.script.run.withSuccessHandler(displayPayslips).listPayslips();
+  }
+
+  function displayPayslips(payslips) {
+    var tableBody = document.getElementById('payrollTableBody');
+    tableBody.innerHTML = '';
+    payslips.forEach(function(p) {
+      var row = tableBody.insertRow();
+      row.insertCell().textContent = p['Record #'];
+      row.insertCell().textContent = p['Employee Name'];
+      row.insertCell().textContent = new Date(p['Week Ending']).toLocaleDateString();
+      row.insertCell().textContent = p['Gross Salary'];
+      row.insertCell().textContent = p['Total Deductions'];
+      row.insertCell().textContent = p['Nett Salary'];
+      row.insertCell().textContent = p['Paid to Account'];
+      var actionsCell = row.insertCell();
+      actionsCell.innerHTML = '<button onclick="viewPayslipPDF(\'' + p['Record #'] + '\')">PDF</button>';
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    fetchPayslips();
+  });
 </script>
