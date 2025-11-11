@@ -1,0 +1,29 @@
+<!-- Timesheet Approval -->
+<div>
+  <h2>Pending Timesheets</h2>
+  <div class="filters">
+    <select id="timesheet-status-filter">
+      <option value="Pending">Pending</option>
+      <option value="Approved">Approved</option>
+      <option value="Rejected">Rejected</option>
+    </select>
+  </div>
+  <table id="timesheet-approval-table">
+    <thead>
+      <tr>
+        <th>Employee Name</th>
+        <th>Week Ending</th>
+        <th>Hours</th>
+        <th>Minutes</th>
+        <th>Overtime Hours</th>
+        <th>Overtime Minutes</th>
+        <th>Notes</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Pending timesheet rows will be inserted here dynamically -->
+    </tbody>
+  </table>
+</div>

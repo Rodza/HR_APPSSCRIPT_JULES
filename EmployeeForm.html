@@ -1,0 +1,84 @@
+<!-- Employee Form -->
+<form id="employee-form">
+  <input type="hidden" id="employee-id" name="employee-id">
+  <div class="form-group">
+    <label for="employee-name">Employee Name</label>
+    <input type="text" id="employee-name" name="EMPLOYEE NAME" required>
+  </div>
+  <div class="form-group">
+    <label for="surname">Surname</label>
+    <input type="text" id="surname" name="SURNAME" required>
+  </div>
+  <div class="form-group">
+    <label for="employer">Employer</label>
+    <select id="employer" name="EMPLOYER" required>
+      <option value="SA Grinding Wheels">SA Grinding Wheels</option>
+      <option value="Scorpio Abrasives">Scorpio Abrasives</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="hourly-rate">Hourly Rate</label>
+    <input type="number" id="hourly-rate" name="HOURLY RATE" step="0.01" required>
+  </div>
+  <div class="form-group">
+    <label for="id-number">ID Number</label>
+    <input type="text" id="id-number" name="ID NUMBER" required>
+  </div>
+  <div class="form-group">
+    <label for="contact-number">Contact Number</label>
+    <input type="tel" id="contact-number" name="CONTACT NUMBER" required>
+  </div>
+  <div class="form-group">
+    <label for="address">Address</label>
+    <textarea id="address" name="ADDRESS" required></textarea>
+  </div>
+  <div class="form-group">
+    <label for="employment-status">Employment Status</label>
+    <select id="employment-status" name="EMPLOYMENT STATUS" required>
+      <option value="Permanent">Permanent</option>
+      <option value="Temporary">Temporary</option>
+      <option value="Contract">Contract</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="clock-in-ref">ClockInRef</label>
+    <input type="text" id="clock-in-ref" name="ClockInRef" required>
+  </div>
+  <div class="form-group">
+    <label for="date-of-birth">Date of Birth</label>
+    <input type="date" id="date-of-birth" name="DATE OF BIRTH">
+  </div>
+  <div class="form-group">
+    <label for="alternative-contact">Alternative Contact</label>
+    <input type="tel" id="alternative-contact" name="ALTERNATIVE CONTACT">
+  </div>
+  <div class="form-group">
+    <label for="alt-contact-name">Alt Contact Name</label>
+    <input type="text" id="alt-contact-name" name="ALT CONTACT NAME">
+  </div>
+  <div class="form-group">
+    <label for="income-tax-number">Income Tax Number</label>
+    <input type="text" id="income-tax-number" name="INCOME TAX NUMBER">
+  </div>
+  <div class="form-group">
+    <label for="employment-date">Employment Date</label>
+    <input type="date" id="employment-date" name="EMPLOYMENT DATE">
+  </div>
+  <div class="form-group">
+    <label for="termination-date">Termination Date</label>
+    <input type="date" id="termination-date" name="TERMINATION DATE">
+  </div>
+  <div class="form-group">
+    <label for="notes">Notes</label>
+    <textarea id="notes" name="NOTES"></textarea>
+  </div>
+    <div class="form-group">
+    <label for="overal-size">Overal Size</label>
+    <input type="number" id="overal-size" name="OveralSize">
+  </div>
+  <div class="form-group">
+    <label for="shoe-size">Shoe Size</label>
+    <input type="number" id="shoe-size" name="ShoeSize">
+  </div>
+  <button type="submit" id="employee-submit-button">Save Employee</button>
+</form>

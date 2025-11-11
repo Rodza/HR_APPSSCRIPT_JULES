@@ -1,0 +1,188 @@
+<!-- LeaveList.html -->
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h3 class="mb-0">Leave Management</h3>
+    <button class="btn btn-primary" onclick="loadView('leave-add')">
+      <i class="bi bi-plus-circle"></i> Add Leave Record
+    </button>
+  </div>
+  <div class="card-body">
+    
+    <!-- Search and Filter -->
+    <div class="row mb-3">
+      <div class="col-md-5">
+        <input type="text" class="form-control" id="leaveSearchBox" placeholder="Search by employee name..." onkeyup="applyLeaveFilters()">
+      </div>
+      <div class="col-md-4">
+        <select class="form-select" id="leaveReasonFilter" onchange="applyLeaveFilters()">
+          <option value="">All Reasons</option>
+          <option value="AWOL">AWOL</option>
+          <option value="Sick Leave">Sick Leave</option>
+          <option value="Annual Leave">Annual Leave</option>
+          <option value="Unpaid Leave">Unpaid Leave</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <input type="month" class="form-control" id="leaveMonthFilter" onchange="applyLeaveFilters()" placeholder="Filter by month">
+      </div>
+    </div>
+    
+    <!-- Leave Table -->
+    <div class="table-responsive">
+      <table class="table table-striped table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th>Employee Name</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Reason</th>
+            <th>Total Days</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody id="leaveTableBody">
+          <tr>
+            <td colspan="6" class="text-center">
+              <div class="spinner-border spinner-border-sm" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              Loading leave records...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Leave Count -->
+    <div class="mt-2 text-muted">
+      <small id="leaveCount">Loading...</small>
+    </div>
+    
+  </div>
+</div>
+
+<script>
+  // Store all leave records for client-side filtering
+  var allLeaveRecords = [];
+  
+  /**
+   * Load leave records from server
+   */
+  function loadLeaveRecords() {
+    var filters = {
+      employeeName: document.getElementById('leaveSearchBox').value,
+      reason: document.getElementById('leaveReasonFilter').value
+    };
+    
+    google.script.run
+      .withSuccessHandler(displayLeaveRecords)
+      .withFailureHandler(function(error) {
+        document.getElementById('leaveTableBody').innerHTML = 
+          '<tr><td colspan="6" class="text-center text-danger">Error loading leave records: ' + error.message + '</td></tr>';
+      })
+      .listLeave(filters);
+  }
+  
+  /**
+   * Display leave records in table
+   */
+  function displayLeaveRecords(leaveRecords) {
+    allLeaveRecords = leaveRecords;
+    var tbody = document.getElementById('leaveTableBody');
+    tbody.innerHTML = '';
+    
+    if (!leaveRecords || leaveRecords.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No leave records found</td></tr>';
+      document.getElementById('leaveCount').textContent = 'No leave records';
+      return;
+    }
+    
+    for (var i = 0; i < leaveRecords.length; i++) {
+      var leave = leaveRecords[i];
+      var row = document.createElement('tr');
+      
+      // Employee Name
+      var nameCell = document.createElement('td');
+      nameCell.innerHTML = '<strong>' + escapeHtml(leave['Employee Name'] || '') + '</strong>';
+      row.appendChild(nameCell);
+      
+      // Start Date
+      var startCell = document.createElement('td');
+      startCell.textContent = formatDate(leave['Start Date']);
+      row.appendChild(startCell);
+      
+      // End Date
+      var endCell = document.createElement('td');
+      endCell.textContent = formatDate(leave['End Date']);
+      row.appendChild(endCell);
+      
+      // Reason
+      var reasonCell = document.createElement('td');
+      var reasonBadge = document.createElement('span');
+      reasonBadge.className = 'badge ' + getReasonBadgeClass(leave.Reason);
+      reasonBadge.textContent = leave.Reason || '';
+      reasonCell.appendChild(reasonBadge);
+      row.appendChild(reasonCell);
+      
+      // Total Days
+      var daysCell = document.createElement('td');
+      daysCell.textContent = leave['Total Days'] || '0';
+      row.appendChild(daysCell);
+      
+      // Notes
+      var notesCell = document.createElement('td');
+      notesCell.textContent = leave.Notes || '-';
+      notesCell.style.maxWidth = '200px';
+      notesCell.style.overflow = 'hidden';
+      notesCell.style.textOverflow = 'ellipsis';
+      notesCell.style.whiteSpace = 'nowrap';
+      row.appendChild(notesCell);
+      
+      tbody.appendChild(row);
+    }
+    
+    // Update count
+    document.getElementById('leaveCount').textContent = 
+      'Showing ' + leaveRecords.length + ' leave record' + (leaveRecords.length !== 1 ? 's' : '');
+  }
+  
+  /**
+   * Apply filters
+   */
+  function applyLeaveFilters() {
+    loadLeaveRecords();
+  }
+  
+  /**
+   * Get badge class for leave reason
+   */
+  function getReasonBadgeClass(reason) {
+    if (reason === 'Annual Leave') return 'bg-success';
+    if (reason === 'Sick Leave') return 'bg-info';
+    if (reason === 'AWOL') return 'bg-danger';
+    if (reason === 'Unpaid Leave') return 'bg-warning';
+    return 'bg-secondary';
+  }
+  
+  /**
+   * Format date for display
+   */
+  function formatDate(date) {
+    if (!date) return '-';
+    var d = new Date(date);
+    if (isNaN(d.getTime())) return '-';
+    return d.toLocaleDateString('en-ZA');
+  }
+  
+  /**
+   * Escape HTML to prevent XSS
+   */
+  function escapeHtml(text) {
+    var div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+  
+  // Auto-load leave records on page load
+  loadLeaveRecords();
+</script>

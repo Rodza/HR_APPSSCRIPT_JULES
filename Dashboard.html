@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <title>HR System - SA Grinding Wheels</title>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f5f5;
+    }
+    
+    .navbar {
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    #content {
+      min-height: 500px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+    
+    .spinner-border {
+      width: 3rem;
+      height: 3rem;
+    }
+  </style>
+</head>
+<body>
+  
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#" onclick="loadView('employee-list'); return false;">
+        <strong>HR System</strong> - SA Grinding Wheels
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link active" href="#" onclick="loadView('employee-list'); return false;" id="nav-employees">
+              Employees
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" onclick="loadView('leave-list'); return false;" id="nav-leave">Leave</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" onclick="loadView('loan-list'); return false;" id="nav-loans">Loans</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" onclick="loadView('timesheet-list'); return false;" id="nav-timesheets">Timesheets</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" onclick="loadView('payroll-list'); return false;" id="nav-payroll">Payroll</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" onclick="loadView('reports-menu'); return false;" id="nav-reports">Reports</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Content Area -->
+  <div class="container mt-4" id="content">
+    <div class="loading">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-3">Loading...</p>
+    </div>
+  </div>
+  
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    // Global state
+    var currentView = 'employee-list';
+    var currentEmployeeId = null;
+    
+    /**
+     * Execute scripts from dynamically loaded HTML
+     * innerHTML doesn't execute scripts for security reasons, so we need to manually extract and execute them
+     */
+    function executeScripts(html) {
+      var tempDiv = document.createElement('div');
+      tempDiv.innerHTML = html;
+      
+      // Get all script tags
+      var scripts = tempDiv.getElementsByTagName('script');
+      var scriptsArray = Array.prototype.slice.call(scripts);
+      
+      // Remove scripts from HTML
+      scriptsArray.forEach(function(script) {
+        script.parentNode.removeChild(script);
+      });
+      
+      // Insert HTML without scripts
+      document.getElementById('content').innerHTML = tempDiv.innerHTML;
+      
+      // Execute scripts one by one
+      scriptsArray.forEach(function(oldScript) {
+        var newScript = document.createElement('script');
+        newScript.type = 'text/javascript';
+        
+        if (oldScript.src) {
+          newScript.src = oldScript.src;
+        } else {
+          newScript.textContent = oldScript.textContent;
+        }
+        
+        document.body.appendChild(newScript);
+      });
+    }
+    
+    /**
+     * Load a view into the content area
+     */
+    function loadView(viewName, params) {
+      console.log('Loading view: ' + viewName, params);
+      
+      // Update navigation active state
+      updateNavigation(viewName);
+      
+      // Store current view
+      currentView = viewName;
+      
+      // Show loading state
+      document.getElementById('content').innerHTML = 
+        '<div class="loading">' +
+        '<div class="spinner-border text-primary" role="status">' +
+        '<span class="visually-hidden">Loading...</span>' +
+        '</div>' +
+        '<p class="mt-3">Loading...</p>' +
+        '</div>';
+      
+      // Load appropriate view
+      if (viewName === 'employee-list') {
+        google.script.run
+          .withSuccessHandler(function(html) {
+            executeScripts(html);
+          })
+          .withFailureHandler(showError)
+          .include('EmployeeList');
+          
+      } else if (viewName === 'employee-add') {
+        google.script.run
+          .withSuccessHandler(function(html) {
+            executeScripts(html);
+          })
+          .withFailureHandler(showError)
+          .include('EmployeeForm');
+          
+      } else if (viewName === 'employee-edit') {
+        if (!params || !params.id) {
+          showError('Employee ID is required');
+          return;
+        }
+        currentEmployeeId = params.id;
+        google.script.run
+          .withSuccessHandler(function(html) {
+            executeScripts(html);
+            // Load employee data
+            loadEmployeeData(params.id);
+          })
+          .withFailureHandler(showError)
+          .include('EmployeeForm');
+          
+      } else if (viewName === 'employee-view') {
+        if (!params || !params.id) {
+          showError('Employee ID is required');
+          return;
+        }
+        // For now, redirect to edit (view mode can be added later)
+        loadView('employee-edit', params);
+        
+      // Leave Management
+      } else if (viewName === 'leave-list') {
+        google.script.run
+          .withSuccessHandler(function(html) {
+            executeScripts(html);
+          })
+          .withFailureHandler(showError)
+          .include('LeaveList');
+          
+      } else if (viewName === 'leave-add') {
+        google.script.run
+          .withSuccessHandler(function(html) {
+            executeScripts(html);
+          })
+          .withFailureHandler(showError)
+          .include('LeaveForm');
+      
+      // Loan Management
+      } else if (viewName === 'loan-list') {
+        google.script.run
+          .withSuccessHandler(function(html) {
+            executeScripts(html);
+          })
+          .withFailureHandler(showError)
+          .include('LoanList');
+          
+      } else if (viewName === 'loan-add') {
+        google.script.run
+          .withSuccessHandler(function(html) {
+            executeScripts(html);
+          })
+          .withFailureHandler(showError)
+          .include('LoanForm');
+      
+      // Payroll Management
+      } else if (viewName === 'payroll-list') {
+        google.script.run
+          .withSuccessHandler(function(html) {
+            executeScripts(html);
+          })
+          .withFailureHandler(showError)
+          .include('PayrollList');
+          
+      } else if (viewName === 'payroll-add') {
+        google.script.run
+          .withSuccessHandler(function(html) {
+            executeScripts(html);
+          })
+          .withFailureHandler(showError)
+          .include('PayrollForm');
+      
+      // Timesheet Management
+      } else if (viewName === 'timesheet-list') {
+        google.script.run
+          .withSuccessHandler(function(html) {
+            executeScripts(html);
+          })
+          .withFailureHandler(showError)
+          .include('TimesheetList');
+          
+      } else if (viewName === 'timesheet-import') {
+        google.script.run
+          .withSuccessHandler(function(html) {
+            executeScripts(html);
+          })
+          .withFailureHandler(showError)
+          .include('TimesheetImport');
+      
+      // Reports
+      } else if (viewName === 'reports-menu') {
+        google.script.run
+          .withSuccessHandler(function(html) {
+            executeScripts(html);
+          })
+          .withFailureHandler(showError)
+          .include('ReportsMenu');
+        
+      } else {
+        document.getElementById('content').innerHTML = 
+          '<div class="alert alert-warning">View not implemented yet: ' + viewName + '</div>';
+      }
+    }
+    
+    /**
+     * Update navigation active state
+     */
+    function updateNavigation(viewName) {
+      // Remove active from all nav links
+      var navLinks = document.querySelectorAll('.nav-link');
+      for (var i = 0; i < navLinks.length; i++) {
+        navLinks[i].classList.remove('active');
+      }
+      
+      // Add active to current module
+      if (viewName.indexOf('employee') === 0) {
+        document.getElementById('nav-employees').classList.add('active');
+      } else if (viewName.indexOf('leave') === 0) {
+        document.getElementById('nav-leave').classList.add('active');
+      } else if (viewName.indexOf('loan') === 0) {
+        document.getElementById('nav-loans').classList.add('active');
+      } else if (viewName.indexOf('timesheet') === 0) {
+        document.getElementById('nav-timesheets').classList.add('active');
+      } else if (viewName.indexOf('payroll') === 0) {
+        document.getElementById('nav-payroll').classList.add('active');
+      } else if (viewName.indexOf('reports') === 0) {
+        document.getElementById('nav-reports').classList.add('active');
+      }
+    }
+    
+    /**
+     * Show error message
+     */
+    function showError(error) {
+      console.error('Error:', error);
+      document.getElementById('content').innerHTML = 
+        '<div class="alert alert-danger">' +
+        '<h4>Error</h4>' +
+        '<p>' + error.message + '</p>' +
+        '</div>';
+    }
+    
+    /**
+     * Show success message
+     */
+    function showSuccess(message) {
+      var alertDiv = document.createElement('div');
+      alertDiv.className = 'alert alert-success alert-dismissible fade show';
+      alertDiv.innerHTML = 
+        '<strong>Success!</strong> ' + message +
+        '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+      
+      var content = document.getElementById('content');
+      content.insertBefore(alertDiv, content.firstChild);
+      
+      // Auto-dismiss after 5 seconds
+      setTimeout(function() {
+        alertDiv.remove();
+      }, 5000);
+    }
+    
+    /**
+     * Load employee data into form (for edit mode)
+     */
+    function loadEmployeeData(employeeId) {
+      google.script.run
+        .withSuccessHandler(function(employee) {
+          if (!employee) {
+            showError({message: 'Employee not found'});
+            return;
+          }
+          populateEmployeeForm(employee);
+        })
+        .withFailureHandler(showError)
+        .getEmployeeById(employeeId);
+    }
+    
+    /**
+     * Populate form with employee data
+     */
+    function populateEmployeeForm(employee) {
+      // Update form title
+      document.getElementById('formTitle').textContent = 'Edit Employee: ' + employee.REFNAME;
+      
+      // Populate fields
+      document.getElementById('employeeName').value = employee['EMPLOYEE NAME'] || '';
+      document.getElementById('surname').value = employee.SURNAME || '';
+      document.getElementById('employer').value = employee.EMPLOYER || '';
+      document.getElementById('hourlyRate').value = employee['HOURLY RATE'] || '';
+      document.getElementById('idNumber').value = employee['ID NUMBER'] || '';
+      document.getElementById('contactNumber').value = employee['CONTACT NUMBER'] || '';
+      document.getElementById('address').value = employee.ADDRESS || '';
+      document.getElementById('employmentStatus').value = employee['EMPLOYMENT STATUS'] || '';
+      document.getElementById('clockInRef').value = employee.ClockInRef || '';
+      
+      // Optional fields
+      if (employee['DATE OF BIRTH']) {
+        document.getElementById('dateOfBirth').value = formatDateForInput(employee['DATE OF BIRTH']);
+      }
+      if (employee['EMPLOYMENT DATE']) {
+        document.getElementById('employmentDate').value = formatDateForInput(employee['EMPLOYMENT DATE']);
+      }
+      if (employee['TERMINATION DATE']) {
+        document.getElementById('terminationDate').value = formatDateForInput(employee['TERMINATION DATE']);
+      }
+      document.getElementById('altContact').value = employee['ALTERNATIVE CONTACT'] || '';
+      document.getElementById('altContactName').value = employee['ALT CONTACT NAME'] || '';
+      document.getElementById('taxNumber').value = employee['INCOME TAX NUMBER'] || '';
+      document.getElementById('overalSize').value = employee.OveralSize || '';
+      document.getElementById('shoeSize').value = employee.ShoeSize || '';
+      document.getElementById('notes').value = employee.NOTES || '';
+      
+      // Change button text
+      document.getElementById('submitBtn').textContent = 'Update Employee';
+    }
+    
+    /**
+     * Format date for input field (YYYY-MM-DD)
+     */
+    function formatDateForInput(date) {
+      if (!date) return '';
+      
+      var d = new Date(date);
+      if (isNaN(d.getTime())) return '';
+      
+      var year = d.getFullYear();
+      var month = ('0' + (d.getMonth() + 1)).slice(-2);
+      var day = ('0' + d.getDate()).slice(-2);
+      
+      return year + '-' + month + '-' + day;
+    }
+    
+    // Initialize - load employee list
+    window.onload = function() {
+      loadView('employee-list');
+    };
+  </script>
+</body>
+</html>

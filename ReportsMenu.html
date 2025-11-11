@@ -1,0 +1,50 @@
+<!-- Reports Menu -->
+<div>
+  <h2>Reports</h2>
+
+  <!-- Outstanding Loans Report -->
+  <div class="report-section">
+    <h3>Outstanding Loans Report</h3>
+    <form id="outstanding-loans-report-form">
+      <div class="form-group">
+        <label for="as-of-date">As of Date</label>
+        <input type="date" id="as-of-date" name="as-of-date" required>
+      </div>
+      <button type="submit">Generate Report</button>
+    </form>
+  </div>
+
+  <!-- Individual Statement Report -->
+  <div class="report-section">
+    <h3>Individual Statement</h3>
+    <form id="individual-statement-report-form">
+      <div class="form-group">
+        <label for="employee-name-statement">Employee Name</label>
+        <select id="employee-name-statement" name="employee-name-statement" required>
+          <!-- Employee names will be populated dynamically -->
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="start-date-statement">Start Date</label>
+        <input type="date" id="start-date-statement" name="start-date-statement" required>
+      </div>
+      <div class="form-group">
+        <label for="end-date-statement">End Date</label>
+        <input type="date" id="end-date-statement" name="end-date-statement" required>
+      </div>
+      <button type="submit">Generate Report</button>
+    </form>
+  </div>
+
+  <!-- Weekly Payroll Summary Report -->
+  <div class="report-section">
+    <h3>Weekly Payroll Summary</h3>
+    <form id="weekly-payroll-summary-report-form">
+      <div class="form-group">
+        <label for="week-ending-summary">Week Ending</label>
+        <input type="date" id="week-ending-summary" name="week-ending-summary" required>
+      </div>
+      <button type="submit">Generate Report</button>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,35 @@
+<!-- Leave Form -->
+<form id="leave-form">
+  <div class="form-group">
+    <label for="employee-name-leave">Employee Name</label>
+    <select id="employee-name-leave" name="employee-name-leave" required>
+      <!-- Employee names will be populated dynamically -->
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="start-date">Start Date</label>
+    <input type="date" id="start-date" name="start-date" required>
+  </div>
+  <div class="form-group">
+    <label for="end-date">End Date</label>
+    <input type="date" id="end-date" name="end-date" required>
+  </div>
+  <div class="form-group">
+    <label for="reason">Reason</label>
+    <select id="reason" name="reason" required>
+      <option value="AWOL">AWOL</option>
+      <option value="Sick Leave">Sick Leave</option>
+      <option value="Annual Leave">Annual Leave</option>
+      <option value="Unpaid Leave">Unpaid Leave</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="leave-notes">Notes</label>
+    <textarea id="leave-notes" name="leave-notes"></textarea>
+  </div>
+  <div class="form-group">
+    <label for="supporting-document">Supporting Document</label>
+    <input type="file" id="supporting-document" name="supporting-document">
+  </div>
+  <button type="submit">Record Leave</button>
+</form>

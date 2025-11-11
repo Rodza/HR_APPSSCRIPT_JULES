@@ -1,0 +1,92 @@
+<!-- Payroll Form -->
+<form id="payroll-form">
+  <div class="form-group">
+    <label for="employee-name-payroll">Employee Name</label>
+    <select id="employee-name-payroll" name="employee-name-payroll" required>
+      <!-- Employee names will be populated dynamically -->
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="week-ending">Week Ending</label>
+    <input type="date" id="week-ending" name="week-ending" required>
+  </div>
+  <fieldset>
+    <legend>Time Entry</legend>
+    <div class="form-group">
+      <label for="hours">Hours</label>
+      <input type="number" id="hours" name="hours" value="0">
+    </div>
+    <div class="form-group">
+      <label for="minutes">Minutes</label>
+      <input type="number" id="minutes" name="minutes" value="0">
+    </div>
+    <div class="form-group">
+      <label for="overtime-hours">Overtime Hours</label>
+      <input type="number" id="overtime-hours" name="overtime-hours" value="0">
+    </div>
+    <div class="form-group">
+      <label for="overtime-minutes">Overtime Minutes</label>
+      <input type="number" id="overtime-minutes" name="overtime-minutes" value="0">
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend>Additional Pay</legend>
+    <div class="form-group">
+      <label for="leave-pay">Leave Pay</label>
+      <input type="number" id="leave-pay" name="leave-pay" step="0.01" value="0">
+    </div>
+    <div class="form-group">
+      <label for="bonus-pay">Bonus Pay</label>
+      <input type="number" id="bonus-pay" name="bonus-pay" step="0.01" value="0">
+    </div>
+    <div class="form-group">
+      <label for="other-income">Other Income</label>
+      <input type="number" id="other-income" name="other-income" step="0.01" value="0">
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend>Deductions</legend>
+    <div class="form-group">
+      <label for="other-deductions">Other Deductions</label>
+      <input type="number" id="other-deductions" name="other-deductions" step="0.01" value="0">
+    </div>
+    <div class="form-group">
+      <label for="other-deductions-text">Other Deductions Text</label>
+      <input type="text" id="other-deductions-text" name="other-deductions-text">
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend>Loan Integration</legend>
+    <div id="loan-balance-widget-payroll">
+        <!-- LoanBalanceWidget.html will be loaded here -->
+    </div>
+    <div class="form-group">
+      <label for="loan-deduction">Loan Deduction This Week</label>
+      <input type="number" id="loan-deduction" name="loan-deduction" step="0.01" value="0">
+    </div>
+    <div class="form-group">
+      <label for="new-loan">New Loan This Week</label>
+      <input type="number" id="new-loan" name="new-loan" step="0.01" value="0">
+    </div>
+     <div class="form-group">
+      <label for="loan-disbursement-type">Loan Disbursement Type</label>
+      <select id="loan-disbursement-type" name="loan-disbursement-type">
+        <option value="With Salary">With Salary</option>
+        <option value="Separate">Separate</option>
+      </select>
+    </div>
+  </fieldset>
+  
+  <!-- Calculated Fields (Read-only) -->
+  <fieldset>
+    <legend>Calculations</legend>
+    <p>Gross Salary: <span id="gross-salary">R0.00</span></p>
+    <p>UIF: <span id="uif">R0.00</span></p>
+    <p>Total Deductions: <span id="total-deductions">R0.00</span></p>
+    <p>Nett Salary: <span id="nett-salary">R0.00</span></p>
+    <p><strong>Paid to Account: <span id="paid-to-account">R0.00</span></strong></p>
+  </fieldset>
+
+  <button type="submit">Save Payslip</button>
+  <button type="button" id="generate-pdf">Generate PDF</button>
+</form>

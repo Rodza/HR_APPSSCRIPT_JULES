@@ -1,0 +1,29 @@
+<!-- Employee List -->
+<div>
+  <h2>Employee List</h2>
+  <button onclick="addNewEmployee()">Add New Employee</button>
+  <div class="filters">
+    <input type="text" id="employee-search" placeholder="Search by name...">
+    <select id="employer-filter">
+      <option value="">All Employers</option>
+      <option value="SA Grinding Wheels">SA Grinding Wheels</option>
+      <option value="Scorpio Abrasives">Scorpio Abrasives</option>
+    </select>
+  </div>
+  <table id="employee-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Surname</th>
+        <th>Employer</th>
+        <th>Hourly Rate</th>
+        <th>Contact Number</th>
+        <th>Employment Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Employee rows will be inserted here dynamically -->
+    </tbody>
+  </table>
+</div>
