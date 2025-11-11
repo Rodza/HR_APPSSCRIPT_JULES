@@ -132,143 +132,147 @@
      * Load a view into the content area
      */
     function loadView(viewName, params) {
-      console.log('Loading view: ' + viewName, params);
-      
-      // Update navigation active state
-      updateNavigation(viewName);
-      
-      // Store current view
-      currentView = viewName;
-      
-      // Show loading state
-      document.getElementById('content').innerHTML = 
-        '<div class="loading">' +
-        '<div class="spinner-border text-primary" role="status">' +
-        '<span class="visually-hidden">Loading...</span>' +
-        '</div>' +
-        '<p class="mt-3">Loading...</p>' +
-        '</div>';
-      
-      // Load appropriate view
-      if (viewName === 'employee-list') {
-        google.script.run
-          .withSuccessHandler(function(html) {
-            executeScripts(html);
-          })
-          .withFailureHandler(showError)
-          .include('EmployeeList');
-          
-      } else if (viewName === 'employee-add') {
-        google.script.run
-          .withSuccessHandler(function(html) {
-            executeScripts(html);
-          })
-          .withFailureHandler(showError)
-          .include('EmployeeForm');
-          
-      } else if (viewName === 'employee-edit') {
-        if (!params || !params.id) {
-          showError('Employee ID is required');
-          return;
-        }
-        currentEmployeeId = params.id;
-        google.script.run
-          .withSuccessHandler(function(html) {
-            executeScripts(html);
-            // Load employee data
-            loadEmployeeData(params.id);
-          })
-          .withFailureHandler(showError)
-          .include('EmployeeForm');
-          
-      } else if (viewName === 'employee-view') {
-        if (!params || !params.id) {
-          showError('Employee ID is required');
-          return;
-        }
-        // For now, redirect to edit (view mode can be added later)
-        loadView('employee-edit', params);
+      try {
+        console.log('Loading view: ' + viewName, params);
         
-      // Leave Management
-      } else if (viewName === 'leave-list') {
-        google.script.run
-          .withSuccessHandler(function(html) {
-            executeScripts(html);
-          })
-          .withFailureHandler(showError)
-          .include('LeaveList');
-          
-      } else if (viewName === 'leave-add') {
-        google.script.run
-          .withSuccessHandler(function(html) {
-            executeScripts(html);
-          })
-          .withFailureHandler(showError)
-          .include('LeaveForm');
-      
-      // Loan Management
-      } else if (viewName === 'loan-list') {
-        google.script.run
-          .withSuccessHandler(function(html) {
-            executeScripts(html);
-          })
-          .withFailureHandler(showError)
-          .include('LoanList');
-          
-      } else if (viewName === 'loan-add') {
-        google.script.run
-          .withSuccessHandler(function(html) {
-            executeScripts(html);
-          })
-          .withFailureHandler(showError)
-          .include('LoanForm');
-      
-      // Payroll Management
-      } else if (viewName === 'payroll-list') {
-        google.script.run
-          .withSuccessHandler(function(html) {
-            executeScripts(html);
-          })
-          .withFailureHandler(showError)
-          .include('PayrollList');
-          
-      } else if (viewName === 'payroll-add') {
-        google.script.run
-          .withSuccessHandler(function(html) {
-            executeScripts(html);
-          })
-          .withFailureHandler(showError)
-          .include('PayrollForm');
-      
-      // Timesheet Management
-      } else if (viewName === 'timesheet-list') {
-        google.script.run
-          .withSuccessHandler(function(html) {
-            executeScripts(html);
-          })
-          .withFailureHandler(showError)
-          .include('TimesheetList');
-          
-      } else if (viewName === 'timesheet-import') {
-        google.script.run
-          .withSuccessHandler(function(html) {
-            executeScripts(html);
-          })
-          .withFailureHandler(showError)
-          .include('TimesheetImport');
-      
-      // Reports
-      } else if (viewName === 'reports-menu') {
-        google.script.run
-          .withSuccessHandler(function(html) {
-            executeScripts(html);
-          })
-          .withFailureHandler(showError)
-          .include('ReportsMenu');
+        // Update navigation active state
+        updateNavigation(viewName);
         
-      } else {
+        // Store current view
+        currentView = viewName;
+
+        // Show loading state
         document.getElementById('content').innerHTML = 
-          '<div class="alert alert-warning">View not implemented yet: ' + viewName + '</div>';
+          '<div class="loading">' +
+          '<div class="spinner-border text-primary" role="status">' +
+          '<span class="visually-hidden">Loading...</span>' +
+          '</div>' +
+          '<p class="mt-3">Loading...</p>' +
+          '</div>';
+
+        // Load appropriate view
+        if (viewName === 'employee-list') {
+          google.script.run
+            .withSuccessHandler(function(html) {
+              executeScripts(html);
+            })
+            .withFailureHandler(showError)
+            .include('EmployeeList.html');
+
+        } else if (viewName === 'employee-add') {
+          google.script.run
+            .withSuccessHandler(function(html) {
+              executeScripts(html);
+            })
+            .withFailureHandler(showError)
+            .include('EmployeeForm.html');
+
+        } else if (viewName === 'employee-edit') {
+          if (!params || !params.id) {
+            showError('Employee ID is required');
+            return;
+          }
+          currentEmployeeId = params.id;
+          google.script.run
+            .withSuccessHandler(function(html) {
+              executeScripts(html);
+              // Load employee data
+              loadEmployeeData(params.id);
+            })
+            .withFailureHandler(showError)
+            .include('EmployeeForm.html');
+
+        } else if (viewName === 'employee-view') {
+          if (!params || !params.id) {
+            showError('Employee ID is required');
+            return;
+          }
+          // For now, redirect to edit (view mode can be added later)
+          loadView('employee-edit', params);
+
+        // Leave Management
+        } else if (viewName === 'leave-list') {
+          google.script.run
+            .withSuccessHandler(function(html) {
+              executeScripts(html);
+            })
+            .withFailureHandler(showError)
+            .include('LeaveList.html');
+
+        } else if (viewName === 'leave-add') {
+          google.script.run
+            .withSuccessHandler(function(html) {
+              executeScripts(html);
+            })
+            .withFailureHandler(showError)
+            .include('LeaveForm.html');
+
+        // Loan Management
+        } else if (viewName === 'loan-list') {
+          google.script.run
+            .withSuccessHandler(function(html) {
+              executeScripts(html);
+            })
+            .withFailureHandler(showError)
+            .include('LoanList.html');
+
+        } else if (viewName === 'loan-add') {
+          google.script.run
+            .withSuccessHandler(function(html) {
+              executeScripts(html);
+            })
+            .withFailureHandler(showError)
+            .include('LoanForm.html');
+
+        // Payroll Management
+        } else if (viewName === 'payroll-list') {
+          google.script.run
+            .withSuccessHandler(function(html) {
+              executeScripts(html);
+            })
+            .withFailureHandler(showError)
+            .include('PayrollList.html');
+
+        } else if (viewName === 'payroll-add') {
+          google.script.run
+            .withSuccessHandler(function(html) {
+              executeScripts(html);
+            })
+            .withFailureHandler(showError)
+            .include('PayrollForm.html');
+
+        // Timesheet Management
+        } else if (viewName === 'timesheet-list') {
+          google.script.run
+            .withSuccessHandler(function(html) {
+              executeScripts(html);
+            })
+            .withFailureHandler(showError)
+            .include('TimesheetList.html');
+
+        } else if (viewName === 'timesheet-import') {
+          google.script.run
+            .withSuccessHandler(function(html) {
+              executeScripts(html);
+            })
+            .withFailureHandler(showError)
+            .include('TimesheetImport.html');
+
+        // Reports
+        } else if (viewName === 'reports-menu') {
+          google.script.run
+            .withSuccessHandler(function(html) {
+              executeScripts(html);
+            })
+            .withFailureHandler(showError)
+            .include('ReportsMenu.html');
+
+        } else {
+          document.getElementById('content').innerHTML =
+            '<div class="alert alert-warning">View not implemented yet: ' + viewName + '</div>';
+        }
+      } catch (e) {
+        showError(e);
       }
     }
     
