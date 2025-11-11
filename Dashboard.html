@@ -156,7 +156,7 @@
             executeScripts(html);
           })
           .withFailureHandler(showError)
-          .include('EmployeeList');
+          .include('EmployeeList.html');
 
       } else if (viewName === 'employee-add') {
         google.script.run
@@ -164,7 +164,7 @@
             executeScripts(html);
           })
           .withFailureHandler(showError)
-          .include('EmployeeForm');
+          .include('EmployeeForm.html');
 
       } else if (viewName === 'employee-edit') {
         if (!params || !params.id) {
@@ -179,7 +179,7 @@
             loadEmployeeData(params.id);
           })
           .withFailureHandler(showError)
-          .include('EmployeeForm');
+          .include('EmployeeForm.html');
 
       } else if (viewName === 'employee-view') {
         if (!params || !params.id) {
@@ -196,7 +196,7 @@
             executeScripts(html);
           })
           .withFailureHandler(showError)
-          .include('LeaveList');
+          .include('LeaveList.html');
 
       } else if (viewName === 'leave-add') {
         google.script.run
@@ -204,7 +204,7 @@
             executeScripts(html);
           })
           .withFailureHandler(showError)
-          .include('LeaveForm');
+          .include('LeaveForm.html');
 
       // Loan Management
       } else if (viewName === 'loan-list') {
@@ -213,7 +213,7 @@
             executeScripts(html);
           })
           .withFailureHandler(showError)
-          .include('LoanList');
+          .include('LoanList.html');
 
       } else if (viewName === 'loan-add') {
         google.script.run
@@ -221,7 +221,7 @@
             executeScripts(html);
           })
           .withFailureHandler(showError)
-          .include('LoanForm');
+          .include('LoanForm.html');
 
       // Payroll Management
       } else if (viewName === 'payroll-list') {
@@ -230,7 +230,7 @@
             executeScripts(html);
           })
           .withFailureHandler(showError)
-          .include('PayrollList');
+          .include('PayrollList.html');
 
       } else if (viewName === 'payroll-add') {
         google.script.run
@@ -238,7 +238,7 @@
             executeScripts(html);
           })
           .withFailureHandler(showError)
-          .include('PayrollForm');
+          .include('PayrollForm.html');
 
       // Timesheet Management
       } else if (viewName === 'timesheet-list') {
@@ -247,7 +247,7 @@
             executeScripts(html);
           })
           .withFailureHandler(showError)
-          .include('TimesheetList');
+          .include('TimesheetList.html');
 
       } else if (viewName === 'timesheet-import') {
         google.script.run
@@ -255,7 +255,7 @@
             executeScripts(html);
           })
           .withFailureHandler(showError)
-          .include('TimesheetImport');
+          .include('TimesheetImport.html');
 
       // Reports
       } else if (viewName === 'reports-menu') {
@@ -264,7 +264,7 @@
             executeScripts(html);
           })
           .withFailureHandler(showError)
-          .include('ReportsMenu');
+          .include('ReportsMenu.html');
         
       } else {
         document.getElementById('content').innerHTML = 

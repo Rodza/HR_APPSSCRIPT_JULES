@@ -14,7 +14,7 @@ function addLeave(data) {
       return { success: false, errors: validation.errors };
     }
 
-    const sheet = getSheet('leave');
+    const sheet = getSheet('LEAVE');
     if (!sheet) {
       return { success: false, message: 'Leave sheet not found.' };
     }
@@ -52,7 +52,7 @@ function addLeave(data) {
  * @return {Array<object>} A list of leave records.
  */
 function getLeaveHistory(employeeName) {
-  const sheet = getSheet('leave');
+  const sheet = getSheet('LEAVE');
   const data = sheet.getDataRange().getValues();
   const headers = data.shift();
   const nameCol = headers.indexOf('EMPLOYEE NAME');
@@ -72,7 +72,7 @@ function getLeaveHistory(employeeName) {
  * @return {Array<object>} A list of leave records.
  */
 function listLeave(filters = {}) {
-  const sheet = getSheet('leave');
+  const sheet = getSheet('LEAVE');
   const data = sheet.getDataRange().getValues();
   const headers = data.shift();
   

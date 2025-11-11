@@ -19,7 +19,7 @@ function createPayslip(data) {
     
     var calculatedData = calculatePayslip(data);
 
-    var sheet = getSheet('salary');
+    var sheet = getSheet('MASTERSALARY');
     if (!sheet) {
       return { success: false, message: 'Salary sheet not found. Please check sheet configuration.' };
     }
@@ -53,7 +53,7 @@ function createPayslip(data) {
  */
 function listPayslips(filters) {
   filters = filters || {};
-  var sheet = getSheet('salary');
+  var sheet = getSheet('MASTERSALARY');
   if(!sheet) return [];
   var data = sheet.getDataRange().getValues();
   var headers = data.shift();
@@ -137,7 +137,7 @@ function calculatePayslip(data) {
  */
 function getPayslip(recordNumber) {
   try {
-    var sheet = getSheet('salary');
+    var sheet = getSheet('MASTERSALARY');
     if (!sheet) return null;
     
     var data = sheet.getDataRange().getValues();
@@ -178,7 +178,7 @@ function generatePayslipPDF(recordNumber) {
       return null;
     }
 
-    var sheet = getSheet('salary');
+    var sheet = getSheet('MASTERSALARY');
     if (!sheet) {
       Logger.log('ERROR: Salary sheet not found');
       return null;

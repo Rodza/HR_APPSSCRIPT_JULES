@@ -9,7 +9,7 @@
  */
 function generateWeeklyReport(weekEnding) {
   try {
-    var sheet = getSheet('salary');
+    var sheet = getSheet('MASTERSALARY');
     if (!sheet) {
       return { success: false, message: 'Salary sheet not found' };
     }
@@ -69,7 +69,7 @@ function generateWeeklyReport(weekEnding) {
  */
 function generateMonthlyReport(month, year) {
   try {
-    var sheet = getSheet('salary');
+    var sheet = getSheet('MASTERSALARY');
     if (!sheet) {
       return { success: false, message: 'Salary sheet not found' };
     }
@@ -137,7 +137,7 @@ function generateMonthlyReport(month, year) {
  */
 function generateEmployeeReport(employeeId) {
   try {
-    var sheet = getSheet('salary');
+    var sheet = getSheet('MASTERSALARY');
     if (!sheet) {
       return { success: false, message: 'Salary sheet not found' };
     }
@@ -209,7 +209,7 @@ function generateEmployeeReport(employeeId) {
  */
 function generateLoanReport() {
   try {
-    var sheet = getSheet('loans');
+    var sheet = getSheet('EmployeeLoans');
     if (!sheet) {
       return { success: false, message: 'Loans sheet not found' };
     }

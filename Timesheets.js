@@ -64,7 +64,7 @@ function parseTimesheetCSV(csvText) {
  */
 function stagePendingTimesheets(data) {
   try {
-    var sheet = getSheet('pending_timesheets');
+    var sheet = getSheet('PendingTimesheets');
     if (!sheet) {
       return { success: false, message: 'PendingTimesheets sheet not found. Please check sheet configuration.' };
     }
@@ -114,7 +114,7 @@ function stagePendingTimesheets(data) {
  */
 function approveTimesheet(recordId) {
   try {
-    var sheet = getSheet('pending_timesheets');
+    var sheet = getSheet('PendingTimesheets');
     if (!sheet) {
       return { success: false, message: 'PendingTimesheets sheet not found' };
     }
@@ -163,7 +163,7 @@ function approveTimesheet(recordId) {
  */
 function rejectTimesheet(recordId) {
   try {
-    var sheet = getSheet('pending_timesheets');
+    var sheet = getSheet('PendingTimesheets');
     if (!sheet) {
       return { success: false, message: 'PendingTimesheets sheet not found' };
     }
@@ -193,7 +193,7 @@ function rejectTimesheet(recordId) {
  * @return {Array<object>} List of approved timesheet records.
  */
 function getApprovedTimesheets(weekEnding) {
-  var sheet = getSheet('pending_timesheets');
+  var sheet = getSheet('PendingTimesheets');
   if (!sheet) return [];
   
   var data = sheet.getDataRange().getValues();
@@ -224,7 +224,7 @@ function getApprovedTimesheets(weekEnding) {
  */
 function clearPendingTimesheets() {
   try {
-    var sheet = getSheet('pending_timesheets');
+    var sheet = getSheet('PendingTimesheets');
     if (!sheet) {
       return { success: false, message: 'PendingTimesheets sheet not found' };
     }
