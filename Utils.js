@@ -10,8 +10,19 @@ const SPREADSHEET_ID = SpreadsheetApp.getActiveSpreadsheet().getId();
  * @return {Sheet} The Google Sheet object.
  */
 function getSheet(sheetName) {
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  return ss.getSheetByName(sheetName);
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = ss.getSheetByName(sheetName);
+    if (!sheet) {
+      console.error('Sheet not found:', sheetName);
+      return null;
+    }
+    console.log('Successfully retrieved sheet:', sheetName);
+    return sheet;
+  } catch (e) {
+    console.error('Error in getSheet:', e);
+    return null;
+  }
 }
 
 /**

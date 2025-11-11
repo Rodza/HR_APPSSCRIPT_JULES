@@ -183,9 +183,6 @@
     return div.innerHTML;
   }
   
-  // Auto-load leave records on page load
-  loadLeaveRecords();
-
   function fetchLeave() {
     google.script.run.withSuccessHandler(displayLeave).listLeave();
   }
