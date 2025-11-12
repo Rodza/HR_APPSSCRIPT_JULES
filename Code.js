@@ -66,4 +66,6 @@ function generateIndividualStatementReport(employeeName, startDate, endDate) { r
 function generateWeeklyPayrollSummaryReport(weekEnding) { return Reports.generateWeeklyPayrollSummaryReport(weekEnding); }
 
 // --- Utility Functions ---
-function checkSheetConnections() { return Utils.checkSheetConnections(); }
+function getEmployeeRecordCount() {
+  return getRecordCount('EMPLOYEE DETAILS');
+}
