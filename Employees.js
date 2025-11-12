@@ -203,3 +203,44 @@ function validateEmployee(data) {
 
   return { isValid: errors.length === 0, errors: errors };
 }
+
+/**
+ * Retrieves diagnostic data from the EMPLOYEE DETAILS sheet for testing.
+ * @return {object} An object containing the sheet's headers, data, record count, and status.
+ */
+function getSheetTestData() {
+  try {
+    const sheet = getSheet(EMPLOYEE_SHEET);
+    if (!sheet) {
+      const message = 'Error: Could not find the EMPLOYEE DETAILS sheet. Please check if it exists and the name is correct.';
+      Logger.error(message);
+      return { success: false, message: message, headers: [], data: [], recordCount: 0 };
+    }
+
+    const allData = sheet.getDataRange().getValues();
+    if (allData.length === 0) {
+      const message = 'The sheet is completely empty.';
+       Logger.log(message);
+      return { success: true, message: message, headers: [], data: [], recordCount: 0 };
+    }
+
+    const headers = allData.shift();
+    const recordCount = allData.length;
+
+    const message = `Successfully retrieved data. Found ${recordCount} records.`;
+    Logger.log(message);
+
+    return {
+      success: true,
+      message: message,
+      headers: headers,
+      data: allData,
+      recordCount: recordCount
+    };
+
+  } catch (e) {
+    const message = 'An unexpected error occurred while fetching sheet data: ' + e.message;
+    Logger.error(message);
+    return { success: false, message: message, headers: [], data: [], recordCount: 0 };
+  }
+}
