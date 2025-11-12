@@ -2,7 +2,8 @@
  * @fileoverview Utility functions for the HR system.
  */
 
-const SPREADSHEET_ID = SpreadsheetApp.getActiveSpreadsheet().getId();
+// Hardcoded spreadsheet ID for reliable access in web app deployments
+const SPREADSHEET_ID = '1kb2v0gWFfdfaTBd1DyGH1j2qiDmCEyQj-_kJAZu1bvU';
 
 /**
  * Gets a specific Google Sheet by name.
