@@ -34,7 +34,16 @@
   }
 
   function displayEmployees(employees) {
-    var tableBody = document.getElementById('employee-table').getElementsByTagName('tbody')[0];
+    var employeeTable = document.getElementById('employee-table');
+    if (!employeeTable) {
+      console.error('Employee table not found');
+      return;
+    }
+    var tableBody = employeeTable.getElementsByTagName('tbody')[0];
+    if (!tableBody) {
+      console.error('Table body not found');
+      return;
+    }
     tableBody.innerHTML = '';
 
     if (!employees) {

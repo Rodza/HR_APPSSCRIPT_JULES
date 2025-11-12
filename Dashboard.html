@@ -87,31 +87,39 @@
   
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  
+
   <script>
     // Global state
     var currentView = 'employee-list';
     var currentEmployeeId = null;
+    var isInitialized = false;
     
     /**
      * Execute scripts from dynamically loaded HTML
      * innerHTML doesn't execute scripts for security reasons, so we need to manually extract and execute them
      */
     function executeScripts(html) {
+      // Ensure content element exists
+      var contentElement = document.getElementById('content');
+      if (!contentElement) {
+        console.error('Content element not found. Cannot execute scripts.');
+        return;
+      }
+
       var tempDiv = document.createElement('div');
       tempDiv.innerHTML = html;
-      
+
       // Get all script tags
       var scripts = tempDiv.getElementsByTagName('script');
       var scriptsArray = Array.prototype.slice.call(scripts);
-      
+
       // Remove scripts from HTML
       scriptsArray.forEach(function(script) {
         script.parentNode.removeChild(script);
       });
-      
+
       // Insert HTML without scripts
-      document.getElementById('content').innerHTML = tempDiv.innerHTML;
+      contentElement.innerHTML = tempDiv.innerHTML;
       
       // Execute scripts one by one
       setTimeout(function() {
@@ -136,6 +144,13 @@
     function loadView(viewName, params) {
       console.log('Loading view: ' + viewName, params);
 
+      // Ensure content element exists before manipulation
+      var contentElement = document.getElementById('content');
+      if (!contentElement) {
+        console.error('Content element not found. Cannot load view.');
+        return;
+      }
+
       // Update navigation active state
       updateNavigation(viewName);
 
@@ -143,7 +158,7 @@
       currentView = viewName;
 
       // Show loading state
-      document.getElementById('content').innerHTML =
+      contentElement.innerHTML =
         '<div class="loading">' +
         '<div class="spinner-border text-primary" role="status">' +
         '<span class="visually-hidden">Loading...</span>' +
@@ -305,26 +320,36 @@
      */
     function showError(error) {
       console.error('Error:', error);
-      document.getElementById('content').innerHTML = 
+      var contentElement = document.getElementById('content');
+      if (!contentElement) {
+        console.error('Content element not found. Cannot display error.');
+        return;
+      }
+      contentElement.innerHTML =
         '<div class="alert alert-danger">' +
         '<h4>Error</h4>' +
         '<p>' + error.message + '</p>' +
         '</div>';
     }
-    
+
     /**
      * Show success message
      */
     function showSuccess(message) {
+      var content = document.getElementById('content');
+      if (!content) {
+        console.error('Content element not found. Cannot display success message.');
+        return;
+      }
+
       var alertDiv = document.createElement('div');
       alertDiv.className = 'alert alert-success alert-dismissible fade show';
-      alertDiv.innerHTML = 
+      alertDiv.innerHTML =
         '<strong>Success!</strong> ' + message +
         '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
-      
-      var content = document.getElementById('content');
+
       content.insertBefore(alertDiv, content.firstChild);
-      
+
       // Auto-dismiss after 5 seconds
       setTimeout(function() {
         alertDiv.remove();
@@ -404,14 +429,21 @@
     
     // Initialize - load employee list
     window.onload = function() {
-      google.script.run.withSuccessHandler(function(count) {
-        if (count > -1) {
-          console.log('Successfully connected to the database. Record count: ' + count);
-          loadView('employee-list');
-        } else {
-          showError({message: 'Could not connect to the database. Please check the sheet name and permissions.'});
-        }
-      }).getEmployeeRecordCount();
+      // Add delay to ensure Bootstrap and Google Apps Script environment are fully initialized
+      // This prevents MutationObserver errors when Bootstrap tries to observe DOM elements
+      console.log('Window loaded. Waiting for environment to stabilize...');
+      setTimeout(function() {
+        console.log('Initializing application...');
+        google.script.run.withSuccessHandler(function(count) {
+          if (count > -1) {
+            console.log('Successfully connected to the database. Record count: ' + count);
+            isInitialized = true;
+            loadView('employee-list');
+          } else {
+            showError({message: 'Could not connect to the database. Please check the sheet name and permissions.'});
+          }
+        }).getEmployeeRecordCount();
+      }, 150); // 150ms delay for stability
     };
   </script>
 </body>
