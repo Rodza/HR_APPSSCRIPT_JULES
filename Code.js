@@ -7,8 +7,8 @@
  * @return {HtmlOutput} The HTML output for the web app.
  */
 function doGet() {
-  return HtmlService.createHtmlOutputFromFile('Dashboard.html')
-      .setTitle('HR System Dashboard')
+  return HtmlService.createHtmlOutputFromFile('TestEmployeeList.html')
+      .setTitle('Employee List Test')
       .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.DEFAULT);
 }
 
@@ -64,8 +64,3 @@ function generatePayslipPDF(recordNumber) { return Payroll.generatePayslipPDF(re
 function generateOutstandingLoansReport(asOfDate) { return Reports.generateOutstandingLoansReport(asOfDate); }
 function generateIndividualStatementReport(employeeName, startDate, endDate) { return Reports.generateIndividualStatementReport(employeeName, startDate, endDate); }
 function generateWeeklyPayrollSummaryReport(weekEnding) { return Reports.generateWeeklyPayrollSummaryReport(weekEnding); }
-
-// --- Utility Functions ---
-function getEmployeeRecordCount() {
-  return getRecordCount('EMPLOYEE DETAILS');
-}

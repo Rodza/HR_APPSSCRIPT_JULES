@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <title>Employee List Test</title>
+  </head>
+  <body>
+    <h1>Employee List Test</h1>
+    <p>This is a test page to check if the employee data can be fetched from the Google Sheet.</p>
+    <table id="employee-table" border="1">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>REFNAME</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="2">Loading...</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <script>
+      function fetchEmployees() {
+        console.log('Requesting employee list from server...');
+        google.script.run
+          .withSuccessHandler(displayEmployees)
+          .withFailureHandler(displayError)
+          .listEmployees();
+      }
+
+      function displayEmployees(employees) {
+        console.log('Received data from server:', employees);
+        var tableBody = document.getElementById('employee-table').getElementsByTagName('tbody')[0];
+        tableBody.innerHTML = '';
+
+        if (!employees) {
+          console.error('The server returned null or undefined.');
+          displayError({ message: 'The data received from the server was empty (null). Cannot display employees.' });
+          return;
+        }
+
+        if (employees.length === 0) {
+          tableBody.innerHTML = '<tr><td colspan="2">No employee records found. The connection is working, but the sheet is empty.</td></tr>';
+          return;
+        }
+
+        employees.forEach(function(employee) {
+          var row = tableBody.insertRow();
+          // Use the correct property names 'ID' and 'REFNAME'
+          row.insertCell().textContent = employee['ID'] || 'N/A';
+          row.insertCell().textContent = employee['REFNAME'] || 'N/A';
+        });
+      }
+
+      function displayError(error) {
+        console.error('An error occurred:', error);
+        var tableBody = document.getElementById('employee-table').getElementsByTagName('tbody')[0];
+        tableBody.innerHTML = '';
+        var row = tableBody.insertRow();
+        var cell = row.insertCell();
+        cell.colSpan = 2;
+        cell.textContent = 'Error: ' + error.message;
+        cell.style.color = 'red';
+      }
+
+      // Automatically fetch employees when the page loads.
+      document.addEventListener('DOMContentLoaded', fetchEmployees);
+    </script>
+  </body>
+</html>
