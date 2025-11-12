@@ -32,13 +32,18 @@
   </table>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('DOM loaded. Requesting sheet test data...');
+    function runDiagnostics() {
+      console.log('Running diagnostics...');
       google.script.run
         .withSuccessHandler(displayTestData)
         .withFailureHandler(displayError)
         .getSheetTestData();
-    });
+    }
+
+    window.onload = function() {
+      console.log('Window loaded. Waiting for environment to stabilize...');
+      setTimeout(runDiagnostics, 100); // Add a 100ms delay for stability
+    };
 
     function displayTestData(result) {
       console.log('Received test data:', result);
