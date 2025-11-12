@@ -123,31 +123,36 @@ function getEmployeeByName(name) {
  * @return {Array<object>} A list of employees.
  */
 function listEmployees(filters = {}) {
-  Logger.log('Attempting to list employees from sheet: ' + EMPLOYEE_SHEET);
-  const sheet = getSheet(EMPLOYEE_SHEET);
-  if (!sheet) {
-    Logger.error('Could not find the EMPLOYEE DETAILS sheet. Please check if it exists.');
+  try {
+    Logger.log('Attempting to list employees from sheet: ' + EMPLOYEE_SHEET);
+    const sheet = getSheet(EMPLOYEE_SHEET);
+    if (!sheet) {
+      Logger.error('Could not find the EMPLOYEE DETAILS sheet. Please check if it exists.');
+      return [];
+    }
+    const data = sheet.getDataRange().getValues();
+    const headers = data.shift();
+
+    const employees = data.map(row => {
+      const employee = {};
+      headers.forEach((header, i) => employee[header] = row[i]);
+      return employee;
+    });
+
+    return employees.filter(emp => {
+      let keep = true;
+      if (filters.employer && emp.EMPLOYER !== filters.employer) {
+        keep = false;
+      }
+      if (filters.searchTerm && !(emp['EMPLOYEE NAME'].toLowerCase().includes(filters.searchTerm.toLowerCase()) || emp['SURNAME'].toLowerCase().includes(filters.searchTerm.toLowerCase()))) {
+          keep = false;
+      }
+      return keep;
+    });
+  } catch (e) {
+    Logger.error('An error occurred in listEmployees: ' + e.message);
     return [];
   }
-  const data = sheet.getDataRange().getValues();
-  const headers = data.shift();
-  
-  const employees = data.map(row => {
-    const employee = {};
-    headers.forEach((header, i) => employee[header] = row[i]);
-    return employee;
-  });
-
-  return employees.filter(emp => {
-    let keep = true;
-    if (filters.employer && emp.EMPLOYER !== filters.employer) {
-      keep = false;
-    }
-    if (filters.searchTerm && !(emp['EMPLOYEE NAME'].toLowerCase().includes(filters.searchTerm.toLowerCase()) || emp['SURNAME'].toLowerCase().includes(filters.searchTerm.toLowerCase()))) {
-        keep = false;
-    }
-    return keep;
-  });
 }
 
 /**
