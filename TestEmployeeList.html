@@ -32,101 +32,142 @@
   </table>
 
   <script>
-    function runDiagnostics() {
-      console.log('Running diagnostics...');
-      google.script.run
-        .withSuccessHandler(displayTestData)
-        .withFailureHandler(displayError)
-        .getSheetTestData();
-    }
+    // Wrap entire script in try-catch to isolate from external errors (like MutationObserver)
+    (function() {
+      try {
+        function runDiagnostics() {
+          console.log('Running diagnostics...');
 
-    window.onload = function() {
-      console.log('Window loaded. Waiting for environment to stabilize...');
-      setTimeout(runDiagnostics, 150); // Add a 150ms delay for stability
-    };
+          // Defensive check: Ensure google.script is available
+          if (typeof google === 'undefined' || !google.script) {
+            console.error('Google Script API not loaded');
+            const statusDiv = document.getElementById('status');
+            if (statusDiv) {
+              statusDiv.textContent = 'Error: Google Script API not available';
+              statusDiv.className = 'error';
+            }
+            return;
+          }
 
-    function displayTestData(result) {
-      console.log('Received test data:', result);
-      const statusDiv = document.getElementById('status');
-      if (!statusDiv) {
-        console.error('Status element not found');
-        return;
-      }
+          google.script.run
+            .withSuccessHandler(displayTestData)
+            .withFailureHandler(displayError)
+            .getSheetTestData();
+        }
 
-      statusDiv.textContent = result.message;
-      statusDiv.className = result.success ? 'success' : 'error';
-
-      if (!result.success) {
-        return;
-      }
-
-      // Display headers
-      const headersContainer = document.getElementById('headers-container');
-      if (!headersContainer) {
-        console.error('Headers container not found');
-        return;
-      }
-      if (result.headers.length > 0) {
-        headersContainer.textContent = result.headers.join(', ');
-      } else {
-        headersContainer.textContent = 'No headers found.';
-      }
-
-      // Display record count
-      const recordCountDiv = document.getElementById('record-count');
-      if (!recordCountDiv) {
-        console.error('Record count element not found');
-        return;
-      }
-      recordCountDiv.textContent = `Total records found: ${result.recordCount}`;
-
-      // Display data preview
-      const dataTable = document.getElementById('data-table');
-      if (!dataTable) {
-        console.error('Data table not found');
-        return;
-      }
-      const tableHead = dataTable.querySelector('thead');
-      const tableBody = dataTable.querySelector('tbody');
-      if (!tableHead || !tableBody) {
-        console.error('Table head or body not found');
-        return;
-      }
-      tableHead.innerHTML = '';
-      tableBody.innerHTML = '';
-
-      if (result.headers.length > 0) {
-        const headerRow = tableHead.insertRow();
-        result.headers.forEach(header => {
-          const th = document.createElement('th');
-          th.textContent = header;
-          headerRow.appendChild(th);
+        // Use DOMContentLoaded for more reliable initialization
+        document.addEventListener('DOMContentLoaded', function() {
+          console.log('DOM loaded. Waiting for environment to stabilize...');
+          setTimeout(runDiagnostics, 150); // Add a 150ms delay for stability
         });
-      }
 
-      if (result.data.length > 0) {
-        const previewData = result.data.slice(0, 5); // Show first 5 rows
-        previewData.forEach(rowData => {
-          const row = tableBody.insertRow();
-          rowData.forEach(cellData => {
-            row.insertCell().textContent = cellData;
-          });
-        });
-      } else {
-        tableBody.innerHTML = '<tr><td colspan="' + (result.headers.length || 1) + '">No data rows found.</td></tr>';
-      }
-    }
+        // Fallback to window.onload if DOMContentLoaded already fired
+        if (document.readyState === 'loading') {
+          // DOMContentLoaded will fire
+        } else {
+          // DOM is already ready, use window.onload as fallback
+          window.onload = function() {
+            console.log('Window loaded (fallback). Waiting for environment to stabilize...');
+            setTimeout(runDiagnostics, 150);
+          };
+        }
 
-    function displayError(error) {
-      console.error('An error occurred:', error);
-      const statusDiv = document.getElementById('status');
-      if (!statusDiv) {
-        console.error('Status element not found. Cannot display error.');
-        return;
+        function displayTestData(result) {
+          console.log('Received test data:', result);
+          const statusDiv = document.getElementById('status');
+          if (!statusDiv) {
+            console.error('Status element not found');
+            return;
+          }
+
+          statusDiv.textContent = result.message;
+          statusDiv.className = result.success ? 'success' : 'error';
+
+          if (!result.success) {
+            return;
+          }
+
+          // Display headers
+          const headersContainer = document.getElementById('headers-container');
+          if (!headersContainer) {
+            console.error('Headers container not found');
+            return;
+          }
+          if (result.headers.length > 0) {
+            headersContainer.textContent = result.headers.join(', ');
+          } else {
+            headersContainer.textContent = 'No headers found.';
+          }
+
+          // Display record count
+          const recordCountDiv = document.getElementById('record-count');
+          if (!recordCountDiv) {
+            console.error('Record count element not found');
+            return;
+          }
+          recordCountDiv.textContent = `Total records found: ${result.recordCount}`;
+
+          // Display data preview
+          const dataTable = document.getElementById('data-table');
+          if (!dataTable) {
+            console.error('Data table not found');
+            return;
+          }
+          const tableHead = dataTable.querySelector('thead');
+          const tableBody = dataTable.querySelector('tbody');
+          if (!tableHead || !tableBody) {
+            console.error('Table head or body not found');
+            return;
+          }
+          tableHead.innerHTML = '';
+          tableBody.innerHTML = '';
+
+          if (result.headers.length > 0) {
+            const headerRow = tableHead.insertRow();
+            result.headers.forEach(header => {
+              const th = document.createElement('th');
+              th.textContent = header;
+              headerRow.appendChild(th);
+            });
+          }
+
+          if (result.data.length > 0) {
+            const previewData = result.data.slice(0, 5); // Show first 5 rows
+            previewData.forEach(rowData => {
+              const row = tableBody.insertRow();
+              rowData.forEach(cellData => {
+                row.insertCell().textContent = cellData;
+              });
+            });
+          } else {
+            tableBody.innerHTML = '<tr><td colspan="' + (result.headers.length || 1) + '">No data rows found.</td></tr>';
+          }
+        }
+
+        function displayError(error) {
+          console.error('An error occurred:', error);
+          const statusDiv = document.getElementById('status');
+          if (!statusDiv) {
+            console.error('Status element not found. Cannot display error.');
+            return;
+          }
+          statusDiv.textContent = 'Error: ' + error.message;
+          statusDiv.className = 'error';
+        }
+      } catch(e) {
+        console.error('Application error:', e);
+        // Try to display error in UI if possible
+        try {
+          const statusDiv = document.getElementById('status');
+          if (statusDiv) {
+            statusDiv.textContent = 'Critical error: ' + e.message;
+            statusDiv.className = 'error';
+          }
+        } catch(uiError) {
+          console.error('Unable to display error in UI:', uiError);
+        }
       }
-      statusDiv.textContent = 'Error: ' + error.message;
-      statusDiv.className = 'error';
-    }
+    })();
   </script>
 </body>
 </html>
