@@ -98,28 +98,24 @@ const Logger = {
 };
 
 /**
- * Checks for the existence of all critical sheets.
- * @return {object} An object with `success` and a list of `missingSheets`.
+ * Gets the number of records in a sheet.
+ * @param {string} sheetName The name of the sheet.
+ * @return {number} The number of records (rows - 1), or -1 if an error occurs.
  */
-function checkSheetConnections() {
-  const sheetNames = [
-    'EMPLOYEE DETAILS',
-    'LEAVE',
-    'EmployeeLoans',
-    'MASTERSALARY',
-    'PendingTimesheets'
-  ];
-  const missingSheets = [];
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-
-  sheetNames.forEach(function(sheetName) {
-    if (!ss.getSheetByName(sheetName)) {
-      missingSheets.push(sheetName);
+function getRecordCount(sheetName) {
+  try {
+    const sheet = getSheet(sheetName);
+    if (!sheet) {
+      console.error('Sheet not found for record count:', sheetName);
+      return -1;
     }
-  });
-
-  return {
-    success: missingSheets.length === 0,
-    missingSheets: missingSheets
-  };
+    const lastRow = sheet.getLastRow();
+    if (lastRow === 0) {
+      return 0;
+    }
+    return lastRow - 1;
+  } catch (e) {
+    console.error('Error in getRecordCount:', e);
+    return -1;
+  }
 }

@@ -114,18 +114,20 @@
       document.getElementById('content').innerHTML = tempDiv.innerHTML;
       
       // Execute scripts one by one
-      scriptsArray.forEach(function(oldScript) {
-        var newScript = document.createElement('script');
-        newScript.type = 'text/javascript';
-        
-        if (oldScript.src) {
-          newScript.src = oldScript.src;
-        } else {
-          newScript.textContent = oldScript.textContent;
-        }
-        
-        document.body.appendChild(newScript);
-      });
+      setTimeout(function() {
+        scriptsArray.forEach(function(oldScript) {
+          var newScript = document.createElement('script');
+          newScript.type = 'text/javascript';
+
+          if (oldScript.src) {
+            newScript.src = oldScript.src;
+          } else {
+            newScript.textContent = oldScript.textContent;
+          }
+
+          document.body.appendChild(newScript);
+        });
+      }, 0);
     }
     
     /**
@@ -402,13 +404,14 @@
     
     // Initialize - load employee list
     window.onload = function() {
-      google.script.run.withSuccessHandler(function(result) {
-        if (result.success) {
+      google.script.run.withSuccessHandler(function(count) {
+        if (count > -1) {
+          console.log('Successfully connected to the database. Record count: ' + count);
           loadView('employee-list');
         } else {
-          showError({message: 'Could not connect to the following sheets: ' + result.missingSheets.join(', ')});
+          showError({message: 'Could not connect to the database. Please check the sheet name and permissions.'});
         }
-      }).checkSheetConnections();
+      }).getEmployeeRecordCount();
     };
   </script>
 </body>
