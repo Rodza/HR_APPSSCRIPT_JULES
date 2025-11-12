@@ -123,7 +123,12 @@ function getEmployeeByName(name) {
  * @return {Array<object>} A list of employees.
  */
 function listEmployees(filters = {}) {
+  Logger.log('Attempting to list employees from sheet: ' + EMPLOYEE_SHEET);
   const sheet = getSheet(EMPLOYEE_SHEET);
+  if (!sheet) {
+    Logger.error('Could not find the EMPLOYEE DETAILS sheet. Please check if it exists.');
+    return [];
+  }
   const data = sheet.getDataRange().getValues();
   const headers = data.shift();
   
