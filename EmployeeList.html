@@ -36,6 +36,17 @@
   function displayEmployees(employees) {
     var tableBody = document.getElementById('employee-table').getElementsByTagName('tbody')[0];
     tableBody.innerHTML = '';
+
+    if (!employees) {
+      var row = tableBody.insertRow();
+      var cell = row.insertCell();
+      cell.colSpan = 7;
+      cell.textContent = 'Error: Could not load employee data. The data source may be unavailable.';
+      cell.style.textAlign = 'center';
+      cell.style.color = 'red';
+      return;
+    }
+
     employees.forEach(function(employee) {
       var row = tableBody.insertRow();
       row.insertCell().textContent = employee['EMPLOYEE NAME'];
