@@ -42,12 +42,16 @@
 
     window.onload = function() {
       console.log('Window loaded. Waiting for environment to stabilize...');
-      setTimeout(runDiagnostics, 100); // Add a 100ms delay for stability
+      setTimeout(runDiagnostics, 150); // Add a 150ms delay for stability
     };
 
     function displayTestData(result) {
       console.log('Received test data:', result);
       const statusDiv = document.getElementById('status');
+      if (!statusDiv) {
+        console.error('Status element not found');
+        return;
+      }
 
       statusDiv.textContent = result.message;
       statusDiv.className = result.success ? 'success' : 'error';
@@ -58,6 +62,10 @@
 
       // Display headers
       const headersContainer = document.getElementById('headers-container');
+      if (!headersContainer) {
+        console.error('Headers container not found');
+        return;
+      }
       if (result.headers.length > 0) {
         headersContainer.textContent = result.headers.join(', ');
       } else {
@@ -65,11 +73,25 @@
       }
 
       // Display record count
-      document.getElementById('record-count').textContent = `Total records found: ${result.recordCount}`;
+      const recordCountDiv = document.getElementById('record-count');
+      if (!recordCountDiv) {
+        console.error('Record count element not found');
+        return;
+      }
+      recordCountDiv.textContent = `Total records found: ${result.recordCount}`;
 
       // Display data preview
-      const tableHead = document.getElementById('data-table').querySelector('thead');
-      const tableBody = document.getElementById('data-table').querySelector('tbody');
+      const dataTable = document.getElementById('data-table');
+      if (!dataTable) {
+        console.error('Data table not found');
+        return;
+      }
+      const tableHead = dataTable.querySelector('thead');
+      const tableBody = dataTable.querySelector('tbody');
+      if (!tableHead || !tableBody) {
+        console.error('Table head or body not found');
+        return;
+      }
       tableHead.innerHTML = '';
       tableBody.innerHTML = '';
 
@@ -98,6 +120,10 @@
     function displayError(error) {
       console.error('An error occurred:', error);
       const statusDiv = document.getElementById('status');
+      if (!statusDiv) {
+        console.error('Status element not found. Cannot display error.');
+        return;
+      }
       statusDiv.textContent = 'Error: ' + error.message;
       statusDiv.className = 'error';
     }
