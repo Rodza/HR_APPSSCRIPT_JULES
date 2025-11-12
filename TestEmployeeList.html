@@ -1,72 +1,101 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <base target="_top">
-    <title>Employee List Test</title>
-  </head>
-  <body>
-    <h1>Employee List Test</h1>
-    <p>This is a test page to check if the employee data can be fetched from the Google Sheet.</p>
-    <table id="employee-table" border="1">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>REFNAME</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td colspan="2">Loading...</td>
-        </tr>
-      </tbody>
-    </table>
+<head>
+  <base target="_top">
+  <title>Sheet Connection Test</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h1, h2 { color: #333; }
+    #status { padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 20px; }
+    .success { background-color: #e6ffed; border-color: #b7e1cd; }
+    .error { background-color: #ffebf0; border-color: #f5c6cb; color: #d8000c; }
+    table { border-collapse: collapse; width: 100%; margin-top: 15px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background-color: #f2f2f2; }
+    #loader { text-align: center; padding: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Google Sheet Diagnostic Test</h1>
+  <div id="status">Running tests...</div>
 
-    <script>
-      function fetchEmployees() {
-        console.log('Requesting employee list from server...');
-        google.script.run
-          .withSuccessHandler(displayEmployees)
-          .withFailureHandler(displayError)
-          .listEmployees();
+  <h2>Detected Column Headers</h2>
+  <div id="headers-container"></div>
+
+  <h2>Record Count</h2>
+  <div id="record-count"></div>
+
+  <h2>Data Preview (First 5 Rows)</h2>
+  <table id="data-table">
+    <thead></thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM loaded. Requesting sheet test data...');
+      google.script.run
+        .withSuccessHandler(displayTestData)
+        .withFailureHandler(displayError)
+        .getSheetTestData();
+    });
+
+    function displayTestData(result) {
+      console.log('Received test data:', result);
+      const statusDiv = document.getElementById('status');
+
+      statusDiv.textContent = result.message;
+      statusDiv.className = result.success ? 'success' : 'error';
+
+      if (!result.success) {
+        return;
       }
 
-      function displayEmployees(employees) {
-        console.log('Received data from server:', employees);
-        var tableBody = document.getElementById('employee-table').getElementsByTagName('tbody')[0];
-        tableBody.innerHTML = '';
+      // Display headers
+      const headersContainer = document.getElementById('headers-container');
+      if (result.headers.length > 0) {
+        headersContainer.textContent = result.headers.join(', ');
+      } else {
+        headersContainer.textContent = 'No headers found.';
+      }
 
-        if (!employees) {
-          console.error('The server returned null or undefined.');
-          displayError({ message: 'The data received from the server was empty (null). Cannot display employees.' });
-          return;
-        }
+      // Display record count
+      document.getElementById('record-count').textContent = `Total records found: ${result.recordCount}`;
 
-        if (employees.length === 0) {
-          tableBody.innerHTML = '<tr><td colspan="2">No employee records found. The connection is working, but the sheet is empty.</td></tr>';
-          return;
-        }
+      // Display data preview
+      const tableHead = document.getElementById('data-table').querySelector('thead');
+      const tableBody = document.getElementById('data-table').querySelector('tbody');
+      tableHead.innerHTML = '';
+      tableBody.innerHTML = '';
 
-        employees.forEach(function(employee) {
-          var row = tableBody.insertRow();
-          // Use the correct property names 'ID' and 'REFNAME'
-          row.insertCell().textContent = employee['ID'] || 'N/A';
-          row.insertCell().textContent = employee['REFNAME'] || 'N/A';
+      if (result.headers.length > 0) {
+        const headerRow = tableHead.insertRow();
+        result.headers.forEach(header => {
+          const th = document.createElement('th');
+          th.textContent = header;
+          headerRow.appendChild(th);
         });
       }
 
-      function displayError(error) {
-        console.error('An error occurred:', error);
-        var tableBody = document.getElementById('employee-table').getElementsByTagName('tbody')[0];
-        tableBody.innerHTML = '';
-        var row = tableBody.insertRow();
-        var cell = row.insertCell();
-        cell.colSpan = 2;
-        cell.textContent = 'Error: ' + error.message;
-        cell.style.color = 'red';
+      if (result.data.length > 0) {
+        const previewData = result.data.slice(0, 5); // Show first 5 rows
+        previewData.forEach(rowData => {
+          const row = tableBody.insertRow();
+          rowData.forEach(cellData => {
+            row.insertCell().textContent = cellData;
+          });
+        });
+      } else {
+        tableBody.innerHTML = '<tr><td colspan="' + (result.headers.length || 1) + '">No data rows found.</td></tr>';
       }
+    }
 
-      // Automatically fetch employees when the page loads.
-      document.addEventListener('DOMContentLoaded', fetchEmployees);
-    </script>
-  </body>
+    function displayError(error) {
+      console.error('An error occurred:', error);
+      const statusDiv = document.getElementById('status');
+      statusDiv.textContent = 'Error: ' + error.message;
+      statusDiv.className = 'error';
+    }
+  </script>
+</body>
 </html>

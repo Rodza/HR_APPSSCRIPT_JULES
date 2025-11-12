@@ -38,6 +38,7 @@ function updateEmployee(id, data) { return Employees.updateEmployee(id, data); }
 function getEmployeeById(id) { return Employees.getEmployeeById(id); }
 function listEmployees(filters) { return Employees.listEmployees(filters); }
 function terminateEmployee(id, terminationDate) { return Employees.terminateEmployee(id, terminationDate); }
+function getSheetTestData() { return Employees.getSheetTestData(); }
 
 // --- Leave Management ---
 function addLeave(data) { return Leave.addLeave(data); }
